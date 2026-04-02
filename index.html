@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0f0d" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="DualS" />
+  <title>DualS — Segunda línea</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0f0d;
+      --surface: #111a15;
+      --card: #172019;
+      --accent: #25d366;
+      --muted: #6b8b74;
+      --border: rgba(37,211,102,0.12);
+      --text: #e8f5ec;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
+
+    /* HOME */
+    #home { display: flex; flex-direction: column; height: 100%; padding: calc(var(--safe-top) + 1.5rem) 1.25rem calc(var(--safe-bottom) + 1.5rem); transition: opacity .25s; }
+    .logo-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 2.5rem; }
+    .logo-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .logo-icon svg { width: 20px; height: 20px; }
+    .logo-text { font-size: 20px; font-weight: 600; letter-spacing: -0.5px; }
+    .logo-text span { color: var(--accent); }
+    .headline { font-size: 28px; font-weight: 600; line-height: 1.25; letter-spacing: -0.5px; margin-bottom: 0.75rem; }
+    .headline em { font-style: normal; color: var(--accent); }
+    .sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 2rem; }
+    .accounts { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+    .account-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color .2s, background .2s; -webkit-tap-highlight-color: transparent; }
+    .account-card:active { background: #1e2e22; border-color: var(--accent); }
+    .account-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; flex-shrink: 0; background: rgba(37,211,102,0.15); color: var(--accent); }
+    .account-info { flex: 1; min-width: 0; }
+    .account-name { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
+    .account-detail { font-size: 12px; color: var(--muted); }
+    .account-status { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+    .account-status.online { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+    .notice { background: rgba(37,211,102,0.07); border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem 1rem; font-size: 12px; color: var(--muted); line-height: 1.6; margin-top: 1rem; }
+    .notice strong { color: var(--accent); font-weight: 500; }
+
+    /* SHEET */
+    .sheet-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10; }
+    .sheet-backdrop.open { display: block; }
+    .sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); border-radius: 20px 20px 0 0; padding: 1.5rem 1.5rem calc(var(--safe-bottom) + 1.5rem); z-index: 11; transform: translateY(100%); transition: transform .35s cubic-bezier(.32,.72,0,1); max-height: 85vh; overflow-y: auto; }
+    .sheet.open { transform: translateY(0); }
+    .sheet-handle { width: 36px; height: 4px; background: var(--muted); border-radius: 2px; margin: 0 auto 1.5rem; opacity: .4; }
+    .sheet-title { font-size: 18px; font-weight: 600; margin-bottom: 1.25rem; }
+    .step { display: flex; gap: 14px; margin-bottom: 1.1rem; align-items: flex-start; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(37,211,102,0.15); color: var(--accent); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .step-text { font-size: 14px; line-height: 1.6; }
+    .step-text strong { color: var(--accent); font-weight: 500; }
+    .cta-btn { width: 100%; background: var(--accent); color: #0a0f0d; border: none; border-radius: 12px; padding: 0.9rem; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 1.5rem; transition: opacity .15s; }
+    .cta-btn:active { opacity: 0.85; }
+
+    /* VIEWER */
+    #viewer { display: none; position: fixed; inset: 0; flex-direction: column; background: #000; }
+    #viewer.active { display: flex; }
+    .viewer-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: calc(var(--safe-top) + 0.6rem) 1rem 0.6rem; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .back-btn { background: transparent; border: none; color: var(--accent); font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 8px; -webkit-tap-highlight-color: transparent; }
+    .viewer-info { flex: 1; min-width: 0; }
+    .viewer-name { font-size: 14px; font-weight: 500; }
+    .viewer-url { font-size: 11px; color: var(--muted); }
+    .reload-btn { background: transparent; border: none; color: var(--muted); font-size: 20px; cursor: pointer; padding: 4px 8px; -webkit-tap-highlight-color: transparent; }
+    #wa-frame { flex: 1; width: 100%; border: none; background: #fff; }
+
+    /* LOADING */
+    #frame-loader { position: absolute; bottom: 40%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 16px; pointer-events: none; }
+    .spinner { width: 36px; height: 36px; border: 3px solid rgba(37,211,102,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #frame-loader p { font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home">
+  <div class="logo-wrap">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.37 5.07L2 22l5.09-1.35C8.54 21.49 10.21 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#0a0f0d"/>
+        <path d="M17 14.5c-.25.63-1.38 1.22-1.9 1.25-.52.03-1 .22-3.24-.68C9.14 14 7.45 11.28 7.32 11.11 7.19 10.94 6.25 9.68 6.25 8.38c0-1.3.67-1.93.92-2.2.25-.27.54-.34.72-.34.18 0 .36 0 .52.01.17.01.41-.06.65.52.24.58.79 1.88.86 2.02.07.14.12.3.03.48-.09.18-.14.3-.27.45-.13.15-.28.34-.39.45-.11.11-.26.2-.15.39.33.54.9 1.4 1.57 1.99.86.76 1.57 1 1.76 1.12.19.12.3.1.41-.03.11-.13.66-.77.79-.96.13-.19.26-.16.44-.09.18.07 1.47.71 1.67.81.2.1.33.15.38.23.06.08.06.64-.16 1.27H17z" fill="#25d366"/>
+      </svg>
+    </div>
+    <div class="logo-text">Dual<span>S</span></div>
+  </div>
+
+  <div class="headline">Dos líneas de <em>WhatsApp</em><br>en un celu</div>
+  <p class="sub">Usá el WhatsApp de otra línea desde acá, sin cerrar tu sesión principal.</p>
+
+  <div class="accounts">
+    <div class="account-card" onclick="openWA()">
+      <div class="account-avatar">L2</div>
+      <div class="account-info">
+        <div class="account-name">Línea secundaria</div>
+        <div class="account-detail">Tocá para abrir · Escaneá el QR la primera vez</div>
+      </div>
+      <div class="account-status" id="dot"></div>
+    </div>
+
+    <div class="account-card" style="opacity:.6" onclick="showInfo()">
+      <div class="account-avatar" style="background:rgba(107,139,116,0.15);color:var(--muted)">?</div>
+      <div class="account-info">
+        <div class="account-name">¿Cómo funciona?</div>
+        <div class="account-detail">Ver instrucciones paso a paso</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Instalá como app:</strong> Chrome → menú ⋮ → "Agregar a pantalla de inicio" para abrirla sin barra del navegador.
+  </div>
+</div>
+
+<!-- SHEET -->
+<div class="sheet-backdrop" id="backdrop" onclick="closeInfo()"></div>
+<div class="sheet" id="info-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title">Cómo usarlo</div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Instalá esta app en tu pantalla de inicio: Chrome → <strong>⋮ → Agregar a pantalla de inicio</strong>.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Tocá <strong>"Línea secundaria"</strong> en la pantalla principal.</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-text">Esperá que cargue WhatsApp Web vía el proxy. Escaneá el QR con el <strong>segundo celular</strong>.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">La sesión queda guardada. La próxima vez entra directo, <strong>sin escanear QR</strong>.</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-text">Tu WhatsApp original sigue funcionando normal en la app nativa. <strong>No se interfieren.</strong></div></div>
+  <button class="cta-btn" onclick="closeInfo(); openWA()">Abrir segunda línea →</button>
+</div>
+
+<!-- VIEWER -->
+<div id="viewer">
+  <div class="viewer-bar">
+    <button class="back-btn" onclick="closeViewer()">←</button>
+    <div class="viewer-info">
+      <div class="viewer-name">Línea secundaria</div>
+      <div class="viewer-url" id="proxy-url-label">cargando proxy…</div>
+    </div>
+    <button class="reload-btn" onclick="reloadFrame()">↺</button>
+  </div>
+  <div style="position:relative;flex:1;display:flex;flex-direction:column;">
+    <iframe id="wa-frame" src="about:blank" allow="camera; microphone; notifications" referrerpolicy="no-referrer"></iframe>
+    <div id="frame-loader">
+      <div class="spinner"></div>
+      <p>Conectando con WhatsApp…</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── CAMBIÁ ESTA URL por la de tu Railway/Render ──────
+  // Ejemplo: 'https://duals-proxy.up.railway.app'
+  // Dejala vacía y la app te avisa que falta configurar
+  const PROXY_BASE = '';   // <── COMPLETAR DESPUÉS DEL DEPLOY
+
+  const WA_URL = PROXY_BASE ? PROXY_BASE + '/wa' : 'https://web.whatsapp.com';
+
+  function openWA() {
+    const frame   = document.getElementById('wa-frame');
+    const viewer  = document.getElementById('viewer');
+    const home    = document.getElementById('home');
+    const label   = document.getElementById('proxy-url-label');
+    const loader  = document.getElementById('frame-loader');
+
+    label.textContent = PROXY_BASE ? new URL(PROXY_BASE).hostname : 'web.whatsapp.com (directo)';
+
+    if (!PROXY_BASE) {
+      // Sin proxy configurado: aviso rápido pero igual lo intenta
+      label.textContent = '⚠ Sin proxy — configurá PROXY_BASE en index.html';
+    }
+
+    loader.style.display = 'flex';
+    frame.src = WA_URL;
+    frame.onload = () => { loader.style.display = 'none'; };
+
+    home.style.opacity = '0';
+    setTimeout(() => { home.style.display = 'none'; viewer.classList.add('active'); }, 220);
+    document.getElementById('dot').classList.add('online');
+  }
+
+  function closeViewer() {
+    const viewer = document.getElementById('viewer');
+    const home   = document.getElementById('home');
+    viewer.classList.remove('active');
+    home.style.display = 'flex';
+    requestAnimationFrame(() => { home.style.opacity = '1'; });
+  }
+
+  function reloadFrame() {
+    const frame = document.getElementById('wa-frame');
+    document.getElementById('frame-loader').style.display = 'flex';
+    frame.src = WA_URL;
+    frame.onload = () => { document.getElementById('frame-loader').style.display = 'none'; };
+  }
+
+  function showInfo()  { document.getElementById('backdrop').classList.add('open'); document.getElementById('info-sheet').classList.add('open'); }
+  function closeInfo() { document.getElementById('backdrop').classList.remove('open'); document.getElementById('info-sheet').classList.remove('open'); }
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
