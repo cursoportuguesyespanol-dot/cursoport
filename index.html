@@ -10,7 +10,6 @@
   <meta name="apple-mobile-web-app-title" content="DualS" />
   <title>DualS — Segunda línea</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,6 +21,8 @@
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
     html, body { height: 100%; width: 100%; overflow: hidden; background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
+
+    /* HOME */
     #home { display: flex; flex-direction: column; height: 100%; padding: calc(var(--safe-top) + 1.5rem) 1.25rem calc(var(--safe-bottom) + 1.5rem); }
     .logo-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 2.5rem; }
     .logo-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
@@ -31,10 +32,8 @@
     .headline { font-size: 28px; font-weight: 600; line-height: 1.25; letter-spacing: -0.5px; margin-bottom: 0.75rem; }
     .headline em { font-style: normal; color: var(--accent); }
     .sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
-    .warn-banner { display: none; background: rgba(255,190,0,0.1); border: 1px solid rgba(255,190,0,0.3); border-radius: 12px; padding: 0.75rem 1rem; font-size: 12px; color: #ffd966; line-height: 1.6; margin-bottom: 1rem; }
-    .warn-banner.visible { display: block; }
     .accounts { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
-    .account-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color .2s, background .2s; -webkit-tap-highlight-color: transparent; text-decoration: none; color: inherit; }
+    .account-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: border-color .2s, background .2s; -webkit-tap-highlight-color: transparent; color: inherit; text-decoration: none; }
     .account-card:active { background: #1e2e22; border-color: var(--accent); }
     .account-avatar { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; flex-shrink: 0; background: rgba(37,211,102,0.15); color: var(--accent); }
     .account-info { flex: 1; min-width: 0; }
@@ -43,6 +42,17 @@
     .account-chevron { color: var(--muted); font-size: 20px; flex-shrink: 0; }
     .notice { background: rgba(37,211,102,0.07); border: 1px solid var(--border); border-radius: 12px; padding: 0.75rem 1rem; font-size: 12px; color: var(--muted); line-height: 1.6; margin-top: 1rem; }
     .notice strong { color: var(--accent); font-weight: 500; }
+
+    /* VIEWER — ocupa toda la pantalla */
+    #viewer { display: none; position: fixed; inset: 0; flex-direction: column; background: #fff; z-index: 100; }
+    #viewer.active { display: flex; }
+    .viewer-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: calc(var(--safe-top) + 0.6rem) 1rem 0.6rem; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .back-btn { background: transparent; border: none; color: var(--accent); font-size: 22px; cursor: pointer; padding: 4px 8px; border-radius: 8px; }
+    .viewer-name { flex: 1; font-size: 14px; font-weight: 500; }
+    .reload-btn { background: transparent; border: none; color: var(--muted); font-size: 20px; cursor: pointer; padding: 4px 8px; }
+    #wa-frame { flex: 1; width: 100%; border: none; }
+
+    /* SHEET */
     .sheet-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10; }
     .sheet-backdrop.open { display: block; }
     .sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); border-radius: 20px 20px 0 0; padding: 1.5rem 1.5rem calc(var(--safe-bottom) + 1.5rem); z-index: 11; transform: translateY(100%); transition: transform .35s cubic-bezier(.32,.72,0,1); max-height: 85vh; overflow-y: auto; }
@@ -53,11 +63,12 @@
     .step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(37,211,102,0.15); color: var(--accent); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
     .step-text { font-size: 14px; line-height: 1.6; }
     .step-text strong { color: var(--accent); font-weight: 500; }
-    .cta-btn { width: 100%; background: var(--accent); color: #0a0f0d; border: none; border-radius: 12px; padding: 0.9rem; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 1.5rem; transition: opacity .15s; }
+    .cta-btn { width: 100%; background: var(--accent); color: #0a0f0d; border: none; border-radius: 12px; padding: 0.9rem; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 1.5rem; }
     .cta-btn:active { opacity: 0.85; }
   </style>
 </head>
 <body>
+
 <div id="home">
   <div class="logo-wrap">
     <div class="logo-icon">
@@ -70,18 +81,15 @@
   </div>
   <div class="headline">Dos líneas de <em>WhatsApp</em><br>en un celu</div>
   <p class="sub">Usá el WhatsApp de otra línea desde acá, sin cerrar tu sesión principal.</p>
-  <div class="warn-banner" id="warn-banner">
-    ⚠️ <strong>Falta configurar:</strong> completá <code>PROXY_BASE</code> con tu URL de Railway en este archivo.
-  </div>
   <div class="accounts">
-    <a class="account-card" id="wa-link" href="#" onclick="return openWA()">
+    <div class="account-card" onclick="openWA()">
       <div class="account-avatar">L2</div>
       <div class="account-info">
         <div class="account-name">Línea secundaria</div>
-        <div class="account-detail" id="wa-detail">Tocá para abrir · Escaneá el QR la primera vez</div>
+        <div class="account-detail">Tocá para abrir · Escaneá el QR la primera vez</div>
       </div>
       <div class="account-chevron">›</div>
-    </a>
+    </div>
     <div class="account-card" style="opacity:.6" onclick="showInfo()">
       <div class="account-avatar" style="background:rgba(107,139,116,0.15);color:var(--muted)">?</div>
       <div class="account-info">
@@ -92,39 +100,60 @@
     </div>
   </div>
   <div class="notice">
-    <strong>Instalá como app:</strong> Chrome → menú ⋮ → "Agregar a pantalla de inicio" para abrirla sin barra del navegador.
+    <strong>Tip:</strong> Chrome → ⋮ → "Agregar a pantalla de inicio" para usarla como app.
   </div>
+</div>
+
+<!-- VIEWER con iframe que pide sitio desktop -->
+<div id="viewer">
+  <div class="viewer-bar">
+    <button class="back-btn" onclick="closeViewer()">←</button>
+    <div class="viewer-name">Línea secundaria · WhatsApp</div>
+    <button class="reload-btn" onclick="reloadWA()">↺</button>
+  </div>
+  <iframe id="wa-frame"
+    src="about:blank"
+    allow="camera; microphone; notifications; clipboard-read; clipboard-write"
+    referrerpolicy="no-referrer"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads"
+  ></iframe>
 </div>
 
 <div class="sheet-backdrop" id="backdrop" onclick="closeInfo()"></div>
 <div class="sheet" id="info-sheet">
   <div class="sheet-handle"></div>
   <div class="sheet-title">Cómo usarlo</div>
-  <div class="step"><div class="step-num">1</div><div class="step-text">Instalá esta app en tu pantalla de inicio: Chrome → <strong>⋮ → Agregar a pantalla de inicio</strong>.</div></div>
-  <div class="step"><div class="step-num">2</div><div class="step-text">Tocá <strong>"Línea secundaria"</strong> — se abre WhatsApp Web en nueva pestaña vía el proxy.</div></div>
+  <div class="step"><div class="step-num">1</div><div class="step-text">Instalá esta app: Chrome → <strong>⋮ → Agregar a pantalla de inicio</strong>.</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-text">Tocá <strong>"Línea secundaria"</strong> — se abre WhatsApp Web dentro de la app.</div></div>
   <div class="step"><div class="step-num">3</div><div class="step-text">Escaneá el QR con el <strong>segundo celular</strong>. Solo la primera vez.</div></div>
-  <div class="step"><div class="step-num">4</div><div class="step-text">La sesión queda guardada. La próxima vez entra directo, <strong>sin escanear QR</strong>.</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-text">La sesión queda guardada. La próxima vez entra directo <strong>sin QR</strong>.</div></div>
   <div class="step"><div class="step-num">5</div><div class="step-text">Tu WhatsApp original sigue funcionando normal. <strong>No se interfieren.</strong></div></div>
   <button class="cta-btn" onclick="closeInfo(); openWA()">Abrir segunda línea →</button>
 </div>
 
 <script>
-  // ── COMPLETÁ con tu URL de Railway ──────────────────
-  // Ejemplo: 'https://duals-proxy.up.railway.app'
-  const PROXY_BASE = 'https://cursoport-production.up.railway.app';   // <── COMPLETAR DESPUÉS DEL DEPLOY
-
-  const WA_URL = PROXY_BASE ? PROXY_BASE + '/wa' : 'https://web.whatsapp.com';
-
-  if (!PROXY_BASE) {
-    document.getElementById('warn-banner').classList.add('visible');
-    document.getElementById('wa-detail').textContent = '⚠ Sin proxy — abre web.whatsapp.com directamente';
-  }
+  // URL de tu Railway — el proxy convierte el UA a desktop
+  const PROXY_BASE = 'https://cursoport-production.up.railway.app';
+  const WA_URL = PROXY_BASE + '/wa';
 
   function openWA() {
-    // IMPORTANTE: window.open en lugar de iframe
-    // WhatsApp Web bloquea iframes con X-Frame-Options, por eso la pantalla en blanco
-    window.open(WA_URL, '_blank', 'noopener');
-    return false;
+    const viewer = document.getElementById('viewer');
+    const frame  = document.getElementById('wa-frame');
+    viewer.classList.add('active');
+    document.getElementById('home').style.display = 'none';
+    if (frame.src === 'about:blank' || frame.src === '') {
+      frame.src = WA_URL;
+    }
+  }
+
+  function closeViewer() {
+    document.getElementById('viewer').classList.remove('active');
+    document.getElementById('home').style.display = 'flex';
+  }
+
+  function reloadWA() {
+    const frame = document.getElementById('wa-frame');
+    frame.src = WA_URL;
   }
 
   function showInfo()  { document.getElementById('backdrop').classList.add('open'); document.getElementById('info-sheet').classList.add('open'); }
